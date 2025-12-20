@@ -417,8 +417,9 @@ export default function AdventureGame() {
         const dashWindow = d > 90 && d < 280;
         const dashChance = b.state === 'RAGE' ? dt * 1.25 : dt * 0.55;
         if (dashWindow && b.dashCooldown <= 0 && Math.random() < dashChance) {
+          const wasRage = b.state === 'RAGE';
           b.state = 'DASH';
-          b.dashCooldown = b.state === 'RAGE' ? 2.0 : 2.8;
+          b.dashCooldown = wasRage ? 2.0 : 2.8;
           setBossSpeech('Chạy đi đâu!?');
           bossSpeechTimer.current = 1.0;
           shake.current.shake(5, 0.12);

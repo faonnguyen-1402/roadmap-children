@@ -12,6 +12,7 @@ type Props = {
   phase?: BossPhase;
   showHpBar?: boolean;
   speech?: string;
+  speechVisible?: boolean;
   facing?: 'left' | 'right';
 };
 
