@@ -10,6 +10,7 @@ export type PlayerStats = {
   atk: number;
   iq: number; // điểm tư duy
   empathy: number; // điểm ứng xử
+  coin: number;
 };
 
 type Props = {

@@ -12,18 +12,33 @@ export type PlayerRef = {
   maxHp: number;
   atk: number;
   iq: number;
+  coin: number;
   empathy: number;
 };
-
 export function applyReward(player: PlayerRef, reward?: Reward) {
   if (!reward) return { coinDelta: 0 };
 
-  player.atk += reward.atk ?? 0;
-  player.iq += reward.iq ?? 0;
-  player.empathy += reward.empathy ?? 0;
+  if (reward.atk !== undefined) {
+    player.atk += reward.atk;
+  }
 
-  if (reward.maxHp) player.maxHp += reward.maxHp;
-  if (reward.hp) player.hp = Math.min(player.maxHp, player.hp + reward.hp);
+  if (reward.iq !== undefined) {
+    player.iq += reward.iq;
+  }
 
-  return { coinDelta: reward.coin ?? 0 };
+  if (reward.empathy !== undefined) {
+    player.empathy += reward.empathy;
+  }
+
+  if (reward.maxHp !== undefined) {
+    player.maxHp += reward.maxHp;
+  }
+
+  if (reward.hp !== undefined) {
+    player.hp = Math.min(player.maxHp, player.hp + reward.hp);
+  }
+
+  return {
+    coinDelta: reward.coin ?? 0,
+  };
 }
