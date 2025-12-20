@@ -2,8 +2,8 @@ import type { QuizQuestion } from './QuizModal';
 
 /**
  * Gợi ý: reward tăng nhẹ theo level
- * - MATH: atk + iq + coin
- * - SOCIAL: empathy + hp + coin
+ * - MATH: atk + iq
+ * - SOCIAL: empathy + hp
  */
 
 export const MATH_QUESTIONS: QuizQuestion[] = [
@@ -17,7 +17,7 @@ export const MATH_QUESTIONS: QuizQuestion[] = [
     question: '15 + 7 = ?',
     options: ['21', '22', '23'],
     answer: '22',
-    reward: { atk: 2, iq: 1, coin: 6 },
+    reward: { atk: 2, iq: 1 },
   },
   {
     id: 'm2',
@@ -28,7 +28,7 @@ export const MATH_QUESTIONS: QuizQuestion[] = [
     question: '36 ÷ 6 = ?',
     options: ['5', '6', '7'],
     answer: '6',
-    reward: { atk: 2, iq: 1, coin: 6 },
+    reward: { atk: 2, iq: 1 },
   },
   {
     id: 'm3',
@@ -39,7 +39,7 @@ export const MATH_QUESTIONS: QuizQuestion[] = [
     question: '9 + 8 = ?',
     options: ['16', '17', '18'],
     answer: '17',
-    reward: { atk: 2, iq: 1, coin: 6 },
+    reward: { atk: 2, iq: 1 },
   },
   {
     id: 'm4',
@@ -50,7 +50,7 @@ export const MATH_QUESTIONS: QuizQuestion[] = [
     question: '25 - 9 = ?',
     options: ['14', '16', '18'],
     answer: '16',
-    reward: { atk: 2, iq: 1, coin: 6 },
+    reward: { atk: 2, iq: 1 },
   },
 
   // ===== LEVEL 2 (dãy số / so sánh / bảng cửu chương) =====
@@ -63,7 +63,7 @@ export const MATH_QUESTIONS: QuizQuestion[] = [
     question: 'Điền số tiếp theo: 3, 6, 9, 12, ?',
     options: ['14', '15', '18'],
     answer: '15',
-    reward: { atk: 3, iq: 1, coin: 7 },
+    reward: { atk: 3, iq: 1 },
   },
   {
     id: 'm6',
@@ -74,7 +74,7 @@ export const MATH_QUESTIONS: QuizQuestion[] = [
     question: 'Số nào lớn hơn?',
     options: ['19', '91', 'bằng nhau'],
     answer: '91',
-    reward: { atk: 2, iq: 2, coin: 7 },
+    reward: { atk: 2, iq: 2 },
   },
   {
     id: 'm7',
@@ -85,7 +85,7 @@ export const MATH_QUESTIONS: QuizQuestion[] = [
     question: '7 × 6 = ?',
     options: ['36', '42', '48'],
     answer: '42',
-    reward: { atk: 3, iq: 1, coin: 7 },
+    reward: { atk: 3, iq: 1 },
   },
   {
     id: 'm8',
@@ -96,7 +96,7 @@ export const MATH_QUESTIONS: QuizQuestion[] = [
     question: 'Điền số tiếp theo: 2, 4, 6, 8, ?',
     options: ['9', '10', '12'],
     answer: '10',
-    reward: { atk: 3, iq: 1, coin: 7 },
+    reward: { atk: 3, iq: 1 },
   },
 
   // ===== LEVEL 3 (bài toán thực tế + logic) =====
@@ -110,7 +110,7 @@ export const MATH_QUESTIONS: QuizQuestion[] = [
       'Bạn có 20 kẹo, cho bạn 7 kẹo. Sau đó mua thêm 5 kẹo. Bạn có bao nhiêu kẹo?',
     options: ['18', '19', '20'],
     answer: '18',
-    reward: { atk: 3, iq: 2, coin: 8 },
+    reward: { atk: 3, iq: 2 },
   },
   {
     id: 'm10',
@@ -122,7 +122,7 @@ export const MATH_QUESTIONS: QuizQuestion[] = [
       'Bạn có 30.000đ, mua bánh 12.000đ và sữa 10.000đ. Bạn còn lại bao nhiêu?',
     options: ['6.000đ', '8.000đ', '10.000đ'],
     answer: '8.000đ',
-    reward: { atk: 3, iq: 2, coin: 9 },
+    reward: { atk: 3, iq: 2 },
   },
   {
     id: 'm11',
@@ -133,7 +133,7 @@ export const MATH_QUESTIONS: QuizQuestion[] = [
     question: 'Nếu 2 + 2 = 4, 3 + 3 = 6 thì 4 + 4 = ?',
     options: ['6', '8', '10'],
     answer: '8',
-    reward: { atk: 3, iq: 2, coin: 9 },
+    reward: { atk: 3, iq: 2 },
   },
   {
     id: 'm12',
@@ -144,7 +144,7 @@ export const MATH_QUESTIONS: QuizQuestion[] = [
     question: 'Số nào cần cộng thêm 9 để được 25?',
     options: ['14', '16', '18'],
     answer: '16',
-    reward: { atk: 3, iq: 2, coin: 9 },
+    reward: { atk: 3, iq: 2 },
   },
 
   // ===== LEVEL 4 (phân số đơn giản + suy luận 1 bước) =====
@@ -157,7 +157,7 @@ export const MATH_QUESTIONS: QuizQuestion[] = [
     question: '1/2 của 20 là bao nhiêu?',
     options: ['8', '10', '12'],
     answer: '10',
-    reward: { atk: 4, iq: 3, coin: 12 },
+    reward: { atk: 4, iq: 3 },
   },
   {
     id: 'm14',
@@ -168,7 +168,7 @@ export const MATH_QUESTIONS: QuizQuestion[] = [
     question: 'Nếu 5 bạn mỗi bạn có 3 viên bi, tổng cộng có bao nhiêu viên bi?',
     options: ['12', '15', '18'],
     answer: '15',
-    reward: { atk: 4, iq: 3, coin: 12 },
+    reward: { atk: 4, iq: 3 },
   },
   {
     id: 'm15',
@@ -179,7 +179,7 @@ export const MATH_QUESTIONS: QuizQuestion[] = [
     question: 'Điền số tiếp theo: 1, 2, 4, 7, 11, ?',
     options: ['15', '16', '18'],
     answer: '16',
-    reward: { atk: 4, iq: 3, coin: 13 },
+    reward: { atk: 4, iq: 3 },
   },
 
   // ===== LEVEL 5 (boss gate - khó hơn chút) =====
@@ -193,7 +193,7 @@ export const MATH_QUESTIONS: QuizQuestion[] = [
       'Có 3 hộp: hộp Táo, hộp Cam, hộp Táo & Cam. Tất cả đều dán sai nhãn. Mở 1 hộp, nên mở hộp nào để suy ra đúng nhãn các hộp còn lại?',
     options: ['Mở hộp Táo', 'Mở hộp Cam', 'Mở hộp Táo & Cam'],
     answer: 'Mở hộp Táo & Cam',
-    reward: { atk: 6, iq: 5, coin: 18 },
+    reward: { atk: 6, iq: 5 },
   },
   {
     id: 'm17',
@@ -205,7 +205,7 @@ export const MATH_QUESTIONS: QuizQuestion[] = [
       'Một số có 2 chữ số. Tổng 2 chữ số bằng 9. Nếu đổi chỗ 2 chữ số thì số mới lớn hơn số cũ 27. Số đó là?',
     options: ['36', '45', '54'],
     answer: '36',
-    reward: { atk: 6, iq: 5, coin: 20 },
+    reward: { atk: 6, iq: 5 },
   },
 ];
 
@@ -220,7 +220,7 @@ export const SOCIAL_QUESTIONS: QuizQuestion[] = [
     question: 'Bạn lỡ nói lời làm bạn buồn, bạn nên…',
     options: ['Giả vờ không biết', 'Xin lỗi và sửa sai', 'Đổ lỗi cho bạn'],
     answer: 'Xin lỗi và sửa sai',
-    reward: { empathy: 2, hp: 8, coin: 6 },
+    reward: { empathy: 2, hp: 8 },
   },
   {
     id: 's2',
@@ -231,7 +231,7 @@ export const SOCIAL_QUESTIONS: QuizQuestion[] = [
     question: 'Khi xếp hàng ở căn-tin, bạn nên…',
     options: ['Chen lên', 'Đứng đúng thứ tự', 'Đẩy người khác'],
     answer: 'Đứng đúng thứ tự',
-    reward: { empathy: 2, hp: 8, coin: 6 },
+    reward: { empathy: 2, hp: 8 },
   },
   {
     id: 's3',
@@ -242,7 +242,7 @@ export const SOCIAL_QUESTIONS: QuizQuestion[] = [
     question: 'Thấy bạn bị ngã, bạn sẽ…',
     options: ['Cười', 'Bỏ đi', 'Đỡ bạn dậy và hỏi thăm'],
     answer: 'Đỡ bạn dậy và hỏi thăm',
-    reward: { empathy: 2, hp: 8, coin: 6 },
+    reward: { empathy: 2, hp: 8 },
   },
 
   // ===== LEVEL 2 (tình huống rõ hơn) =====
@@ -255,7 +255,7 @@ export const SOCIAL_QUESTIONS: QuizQuestion[] = [
     question: 'Bạn có 1 món đồ chơi và 2 bạn muốn chơi cùng. Bạn nên…',
     options: ['Giữ hết', 'Chia lượt chơi', 'Bắt bạn khác đi chỗ khác'],
     answer: 'Chia lượt chơi',
-    reward: { empathy: 3, hp: 10, coin: 8 },
+    reward: { empathy: 3, hp: 10 },
   },
   {
     id: 's5',
@@ -266,7 +266,7 @@ export const SOCIAL_QUESTIONS: QuizQuestion[] = [
     question: 'Khi tức giận, cách tốt nhất là…',
     options: ['Đập đồ', 'Hít thở sâu và bình tĩnh', 'La hét vào người khác'],
     answer: 'Hít thở sâu và bình tĩnh',
-    reward: { empathy: 3, hp: 10, coin: 8 },
+    reward: { empathy: 3, hp: 10 },
   },
   {
     id: 's6',
@@ -277,7 +277,7 @@ export const SOCIAL_QUESTIONS: QuizQuestion[] = [
     question: 'Bạn nhặt được bút của người khác trong lớp. Bạn nên…',
     options: ['Giữ luôn', 'Hỏi xem ai bị mất và trả lại', 'Vứt đi'],
     answer: 'Hỏi xem ai bị mất và trả lại',
-    reward: { empathy: 3, hp: 10, coin: 8 },
+    reward: { empathy: 3, hp: 10 },
   },
 
   // ===== LEVEL 3 (nâng khó) =====
@@ -290,7 +290,7 @@ export const SOCIAL_QUESTIONS: QuizQuestion[] = [
     question: 'Người lạ nhắn tin xin địa chỉ nhà, bạn nên…',
     options: ['Gửi luôn', 'Không trả lời và báo người lớn', 'Trêu lại'],
     answer: 'Không trả lời và báo người lớn',
-    reward: { empathy: 4, hp: 10, coin: 10 },
+    reward: { empathy: 4, hp: 10 },
   },
   {
     id: 's8',
@@ -306,7 +306,7 @@ export const SOCIAL_QUESTIONS: QuizQuestion[] = [
       'Kêu người khác nói xấu bạn ấy',
     ],
     answer: 'Nói chuyện bình tĩnh và lắng nghe',
-    reward: { empathy: 4, hp: 12, coin: 11 },
+    reward: { empathy: 4, hp: 12 },
   },
   {
     id: 's9',
@@ -321,7 +321,7 @@ export const SOCIAL_QUESTIONS: QuizQuestion[] = [
       'Quay video đăng mạng',
     ],
     answer: 'Báo thầy cô/người lớn và đứng cạnh động viên bạn',
-    reward: { empathy: 4, hp: 12, coin: 12 },
+    reward: { empathy: 4, hp: 12 },
   },
 
   // ===== LEVEL 4 (tinh tế hơn) =====
@@ -339,7 +339,7 @@ export const SOCIAL_QUESTIONS: QuizQuestion[] = [
       'Tố bạn ấy trước cả lớp',
     ],
     answer: 'Nói rõ việc cần chia đều và nhắc bạn cùng làm',
-    reward: { empathy: 5, hp: 14, coin: 14 },
+    reward: { empathy: 5, hp: 14 },
   },
   {
     id: 's11',
@@ -354,7 +354,7 @@ export const SOCIAL_QUESTIONS: QuizQuestion[] = [
       'Đi theo người lạ dẫn đường',
     ],
     answer: 'Đứng yên ở quầy thông tin/bảo vệ và nhờ giúp',
-    reward: { empathy: 5, hp: 14, coin: 14 },
+    reward: { empathy: 5, hp: 14 },
   },
 
   // ===== LEVEL 5 (boss gate) =====
@@ -372,7 +372,7 @@ export const SOCIAL_QUESTIONS: QuizQuestion[] = [
       'Gian lận theo',
     ],
     answer: 'Nhắc bạn dừng lại hoặc báo người lớn',
-    reward: { empathy: 6, hp: 18, coin: 18 },
+    reward: { empathy: 6, hp: 18 },
   },
   {
     id: 's13',
@@ -388,6 +388,6 @@ export const SOCIAL_QUESTIONS: QuizQuestion[] = [
       'Đập đồ để xả',
     ],
     answer: 'Bình tĩnh, rời khỏi tình huống và nói với người lớn',
-    reward: { empathy: 6, hp: 18, coin: 20 },
+    reward: { empathy: 6, hp: 18 },
   },
 ];

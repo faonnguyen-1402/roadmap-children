@@ -1,25 +1,37 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
+import type { Reward } from '../engine/rewards';
 
 export type QuizType = 'MATH' | 'SOCIAL';
+
+export type QuizSubType =
+  | 'CALC'
+  | 'SEQUENCE'
+  | 'LOGIC'
+  | 'WORD_PROBLEM'
+  | 'FRACTION'
+  | 'EMOTION'
+  | 'ETHICS'
+  | 'HELP'
+  | 'SHARING'
+  | 'SAFETY';
 
 export type QuizQuestion = {
   id: string;
   type: QuizType;
-  title?: string; // optional: "Câu đố tư duy" / "Tình huống ứng xử"
+
+  // ✅ để khớp quizData.ts
+  level: number;
+  subType: QuizSubType;
+  title?: string; // optional: fallback theo type
+
   question: string;
   options: string[];
   answer: string;
 
-  // thưởng sau khi đúng
-  reward?: Partial<{
-    hp: number;
-    maxHp: number;
-    atk: number;
-    iq: number;
-    empathy: number;
-  }>;
+  // ✅ thưởng sau khi đúng (đã bỏ coin trong Reward)
+  reward?: Reward;
 };
 
 type Props = {
@@ -64,6 +76,7 @@ export default function QuizModal({
     if (!questions?.length) return null;
     if (mode === 'SEQUENTIAL')
       return questions[Math.max(0, Math.min(idx, questions.length - 1))];
+
     // RANDOM:
     const pick = Math.floor(Math.random() * questions.length);
     return questions[pick];
@@ -74,7 +87,8 @@ export default function QuizModal({
     setChosen(null);
     setStatus('idle');
     setLock(false);
-  }, [open]);
+    setIdx(startIndex);
+  }, [open, startIndex]);
 
   useEffect(() => {
     if (!open) return;
@@ -101,20 +115,20 @@ export default function QuizModal({
     setStatus(ok ? 'correct' : 'wrong');
 
     if (ok) {
-      // feedback nhẹ + thưởng
       setTimeout(() => {
         onCorrect(q);
         onClose();
       }, lockAfterAnswerMs);
     } else {
       onWrong?.(q, opt);
+
       // cho trẻ nhìn đáp án đúng
       setTimeout(() => {
         setLock(false);
         setChosen(null);
         setStatus('idle');
 
-        // nếu SEQUENTIAL thì next question (tuỳ bạn)
+        // nếu SEQUENTIAL thì next question
         if (mode === 'SEQUENTIAL') {
           setIdx((v) => Math.min(v + 1, questions.length - 1));
         }
@@ -138,6 +152,12 @@ export default function QuizModal({
           <div className='text-xs text-white/60 mb-1'>
             {contextLabel ?? 'Nhiệm vụ'}
           </div>
+
+          {/* ✅ hiển thị thêm level/subType nếu muốn (không bắt buộc) */}
+          <div className='text-[11px] text-white/50 mb-1'>
+            Level {q.level} • {q.subType}
+          </div>
+
           <div className='text-lg font-semibold'>{header}</div>
           <div className='mt-2 text-sm text-white/85 leading-relaxed'>
             {q.question}

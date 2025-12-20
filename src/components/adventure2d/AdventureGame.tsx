@@ -58,19 +58,14 @@ export default function AdventureGame() {
   const [toast, setToast] = useState('WASD/Arrow để đi • E tương tác • J đánh');
   const toastTimer = useRef(2.5);
 
-  const [coin, setCoin] = useState(0);
-
-  // ✅ force re-render mỗi frame để UI 
-  // overlay cập nhật theo ref
+  // ✅ force re-render mỗi frame để UI overlay cập nhật theo ref
   const [, forceRender] = useState(0);
 
   // Quiz modal
   const [quizOpen, setQuizOpen] = useState(false);
   const [quizContext, setQuizContext] = useState('Nhiệm vụ');
   const [quizPool, setQuizPool] = useState<QuizQuestion[]>([]);
-  const [activeChallengeId, setActiveChallengeId] = useState<string | null>(
-    null
-  );
+  const [activeChallengeId, setActiveChallengeId] = useState<string | null>(null);
 
   // Boss speech
   const [bossSpeech, setBossSpeech] = useState<string>('');
@@ -198,8 +193,7 @@ export default function AdventureGame() {
       `Thử thách ${ch.label} (${ch.type === 'MATH' ? 'Toán' : 'Ứng xử'})`
     );
 
-    const picked =
-      ch.type === 'MATH' ? mathBank.pickRandom() : socialBank.pickRandom();
+    const picked = ch.type === 'MATH' ? mathBank.pickRandom() : socialBank.pickRandom();
 
     if (!picked) {
       showToast('Bạn đã làm hết câu hỏi của nhóm này rồi! 🎉', 2);
@@ -312,8 +306,7 @@ export default function AdventureGame() {
       showToast(`Bạn đánh Boss -${player.current.atk} HP!`, 1.2);
 
       if (killed) {
-        setCoin((c) => c + 50);
-        showToast('🏆 Boss bị hạ! +50 coin!', 3);
+        showToast('🏆 Boss bị hạ! Bạn đã hoàn thành màn này!', 3);
         particles.current.spawnConfetti({ x: b.x, y: b.y });
 
         setBossSpeech('Ta... thua sao?');
@@ -392,7 +385,7 @@ export default function AdventureGame() {
       }
 
       // ================================
-      // ✅ BOSS AI DUY NHẤT (SĂN LÙNG + DASH + WALL-SLIDE + HIT-RATE)
+      // ✅ BOSS AI (SĂN LÙNG + DASH + WALL-SLIDE + HIT-RATE)
       // ================================
       if (boss.current.alive && status === 'PLAYING') {
         const b = boss.current;
@@ -433,7 +426,11 @@ export default function AdventureGame() {
         const dashSpeed = b.dashSpeed; // 280
 
         const spd =
-          b.state === 'DASH' ? dashSpeed : b.state === 'RAGE' ? rageSpeed : huntSpeed;
+          b.state === 'DASH'
+            ? dashSpeed
+            : b.state === 'RAGE'
+            ? rageSpeed
+            : huntSpeed;
 
         // wall-slide: thử X rồi Y
         const nextX = b.pos.x + nx * spd * dt;
@@ -448,7 +445,7 @@ export default function AdventureGame() {
         if (!isWall(txX, tyX)) b.pos.x = nextX;
         if (!isWall(txY, tyY)) b.pos.y = nextY;
 
-        // HIT: chỉ trừ máu theo nhịp (không dùng *dt để “rõ ràng hơn”)
+        // HIT: chỉ trừ máu theo nhịp
         if (d < 44 && b.touchCooldown <= 0) {
           const dmg = b.state === 'DASH' ? 38 : b.state === 'RAGE' ? 30 : 18;
           const cd = b.state === 'RAGE' ? 0.14 : 0.2;
@@ -582,16 +579,26 @@ export default function AdventureGame() {
         } else {
           const zone = floorTypeAt(x, y);
           const base =
-            zone === 'A' ? '#0b1b3a' :
-            zone === 'B' ? '#0b2a22' :
-            zone === 'C' ? '#2a1b2a' :
-            zone === 'D' ? '#2a240b' : '#0b1220';
+            zone === 'A'
+              ? '#0b1b3a'
+              : zone === 'B'
+              ? '#0b2a22'
+              : zone === 'C'
+              ? '#2a1b2a'
+              : zone === 'D'
+              ? '#2a240b'
+              : '#0b1220';
 
           const inner =
-            zone === 'A' ? '#102a55' :
-            zone === 'B' ? '#123d33' :
-            zone === 'C' ? '#3b2240' :
-            zone === 'D' ? '#3a3212' : '#0f1a33';
+            zone === 'A'
+              ? '#102a55'
+              : zone === 'B'
+              ? '#123d33'
+              : zone === 'C'
+              ? '#3b2240'
+              : zone === 'D'
+              ? '#3a3212'
+              : '#0f1a33';
 
           ctx.fillStyle = base;
           ctx.fillRect(px, py, TILE, TILE);
@@ -616,7 +623,11 @@ export default function AdventureGame() {
       const cy = (chItem.ty + 0.5) * TILE - cam.y;
 
       ctx.beginPath();
-      ctx.fillStyle = chItem.done ? '#22c55e' : (chItem.type === 'MATH' ? '#60a5fa' : '#fb7185');
+      ctx.fillStyle = chItem.done
+        ? '#22c55e'
+        : chItem.type === 'MATH'
+        ? '#60a5fa'
+        : '#fb7185';
       ctx.arc(cx, cy, 10, 0, Math.PI * 2);
       ctx.fill();
 
@@ -668,7 +679,7 @@ export default function AdventureGame() {
     }
 
     const delta = applyReward(player.current, q.reward as Reward);
-    if (delta.coinDelta) setCoin((c) => c + delta.coinDelta);
+    // ✅ xóa coin: chỉ giữ các stat khác (hp/atk/iq/empathy...) do applyReward cập nhật
 
     shake.current.shake(3, 0.12);
     particles.current.spawnConfetti({
@@ -710,11 +721,11 @@ export default function AdventureGame() {
   const bossFacing = boss.current.pos.x < player.current.pos.x ? 'right' : 'left';
 
   return (
-    <div className='w-full flex flex-col items-center gap-3'>
-      <div className='w-full flex items-center justify-between'>
-        <div className='text-lg font-bold'>Adventure 2D • Story Trials → Gate → Boss</div>
+    <div className="w-full flex flex-col items-center gap-3">
+      <div className="w-full flex items-center justify-between">
+        <div className="text-lg font-bold">Adventure 2D • Story Trials → Gate → Boss</div>
 
-        <div className='flex items-center gap-2 text-sm'>
+        <div className="flex items-center gap-2 text-sm">
           <span
             className={`px-3 py-1 rounded-md border ${
               status === 'WIN'
@@ -728,7 +739,7 @@ export default function AdventureGame() {
           </span>
 
           <button
-            className='px-3 py-1 rounded-md border'
+            className="px-3 py-1 rounded-md border"
             onClick={() => setRunning((s) => !s)}
             disabled={status !== 'PLAYING'}
           >
@@ -736,7 +747,7 @@ export default function AdventureGame() {
           </button>
 
           <button
-            className='px-3 py-1 rounded-md border'
+            className="px-3 py-1 rounded-md border"
             onClick={() =>
               showToast(
                 'Tip: Đi tới các chấm M/S và nhấn E để làm thử thách. Xong hết → cổng mở → boss xuất hiện.',
@@ -756,25 +767,24 @@ export default function AdventureGame() {
         atk={player.current.atk}
         iq={player.current.iq}
         empathy={player.current.empathy}
-        coin={coin}
         challengesDone={challengesDone}
         challengesTotal={challengesTotal}
         gateOpen={gateOpen}
       />
 
-      <div className='w-full rounded-xl overflow-hidden border relative'>
+      <div className="w-full rounded-xl overflow-hidden border relative">
         <canvas
           ref={canvasRef}
           width={900}
           height={520}
           tabIndex={0}
           onClick={(e) => (e.currentTarget as HTMLCanvasElement).focus()}
-          className='block w-full h-auto bg-black outline-none'
+          className="block w-full h-auto bg-black outline-none"
         />
 
         {/* ✅ BOSS REACT OVERLAY */}
         {boss.current.alive && (
-          <div className='absolute inset-0 pointer-events-none'>
+          <div className="absolute inset-0 pointer-events-none">
             <div
               style={{
                 position: 'absolute',
@@ -786,7 +796,7 @@ export default function AdventureGame() {
                 x={boss.current.pos.x / TILE - 0.5}
                 y={boss.current.pos.y / TILE - 0.5}
                 tileSize={TILE}
-                name='BOSS'
+                name="BOSS"
                 hp={boss.current.hp}
                 maxHp={boss.current.maxHp}
                 phase={bossPhase as any}
@@ -809,28 +819,27 @@ export default function AdventureGame() {
           }}
           onCorrect={handleCorrect}
           onWrong={handleWrong}
-          mode='RANDOM'
+          mode="RANDOM"
         />
 
         {status !== 'PLAYING' && (
-          <div className='absolute inset-0 bg-black/60 flex items-center justify-center'>
-            <div className='bg-white/95 rounded-2xl p-6 text-center w-[360px] shadow'>
-              <div className='text-3xl font-bold mb-2'>
+          <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+            <div className="bg-white/95 rounded-2xl p-6 text-center w-[360px] shadow">
+              <div className="text-3xl font-bold mb-2">
                 {status === 'WIN' ? '🎉 YOU WIN!' : '💀 YOU LOSE!'}
               </div>
-              <div className='text-sm mb-4 opacity-80'>
+              <div className="text-sm mb-4 opacity-80">
                 {status === 'WIN'
                   ? 'Bạn đã hạ boss và hoàn thành hành trình!'
                   : 'HP về 0 rồi. Bạn có thể reload để chơi lại.'}
               </div>
-              <div className='text-sm mb-2'>Coin: {coin}</div>
-              <div className='text-xs opacity-70'>Tip: nhấn Refresh (F5) để chơi lại.</div>
+              <div className="text-xs opacity-70">Tip: nhấn Refresh (F5) để chơi lại.</div>
             </div>
           </div>
         )}
       </div>
 
-      <div className='text-sm opacity-80'>
+      <div className="text-sm opacity-80">
         Điều khiển: <b>WASD / Arrow</b> đi, <b>E</b> tương tác (thử thách), <b>J</b> đánh boss,{' '}
         <b>Space</b> pause, <b>ESC</b> đóng quiz.
       </div>

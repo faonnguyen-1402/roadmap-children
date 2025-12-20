@@ -7,7 +7,6 @@ export default function StatusBar({
   atk,
   iq,
   empathy,
-  coin,
   challengesDone,
   challengesTotal,
   gateOpen,
@@ -18,7 +17,6 @@ export default function StatusBar({
   atk: number;
   iq: number;
   empathy: number;
-  coin: number;
   challengesDone: number;
   challengesTotal: number;
   gateOpen: boolean;
@@ -28,21 +26,23 @@ export default function StatusBar({
       <span className='px-2 py-1 rounded bg-white/5 border border-white/10'>
         STATUS: <b>{status}</b>
       </span>
+
       <span className='px-2 py-1 rounded bg-white/5 border border-white/10'>
         HP: <b>{hp}</b>/<b>{maxHp}</b>
       </span>
+
       <span className='px-2 py-1 rounded bg-white/5 border border-white/10'>
         ATK: <b>{atk}</b>
       </span>
+
       <span className='px-2 py-1 rounded bg-white/5 border border-white/10'>
         IQ: <b>{iq}</b> • Empathy: <b>{empathy}</b>
       </span>
-      <span className='px-2 py-1 rounded bg-white/5 border border-white/10'>
-        Coin: <b>{coin}</b>
-      </span>
+
       <span className='px-2 py-1 rounded bg-white/5 border border-white/10'>
         Thử thách: <b>{challengesDone}</b>/<b>{challengesTotal}</b>
       </span>
+
       <span className='px-2 py-1 rounded bg-white/5 border border-white/10'>
         Gate: <b>{gateOpen ? 'OPEN ✅' : 'LOCK 🔒'}</b>
       </span>
