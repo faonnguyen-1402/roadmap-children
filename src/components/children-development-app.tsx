@@ -146,13 +146,13 @@ export default function ChildrenDevelopmentApp() {
     setShowRoleplay(false);
     setProgress(null);
   };
-const renderSkillsSection = () => {
-  if(!currentUser) return null;
+const renderSkillsSection = () => (
+  
   <SkillsVideoHub
-    userId={currentUser.id}
+    userId={user.id}
     onBack={() => setCurrentSection('home')}
   />
-};
+);
   const startTopic = (topicId: string) => {
     const topic = questionsData.find((t) => t.id === topicId);
     if (topic) {
@@ -551,6 +551,7 @@ const renderSkillsSection = () => {
   // ---------------- UI render ----------------
 
   if (!currentUser) return <AuthForm onLogin={handleLogin} />;
+  const user = currentUser;
 
   const renderHeader = () => (
     <div className='bg-card/95 backdrop-blur-sm rounded-2xl p-4 sm:p-6 mb-4 sm:mb-6 shadow-lg'>
@@ -581,7 +582,7 @@ const renderSkillsSection = () => {
           </Badge>
 
           <div className='ml-auto lg:ml-0'>
-             <NotificationsBell userId={currentUser.id} />
+             <NotificationsBell userId={user.id} />
             <LogoutButton onLogout={handleLogout} />
           </div>
         </div>
@@ -597,7 +598,7 @@ const renderSkillsSection = () => {
           { id: 'journey', label: 'Hành trình', icon: Map },
           { id: 'games', label: 'Trò chơi', icon: Gamepad2 },
           { id: 'exercises', label: 'Bài tập', icon: BookOpen },
-          { id: 'personality', label: 'Tính cách', icon: Brain },
+          
           { id: 'skills', label: 'Video kỹ năng', icon: BookOpen },
           { id: 'settings', label: 'Cài đặt', icon: Settings },
           { id: 'parent', label: 'Phụ huynh', icon: Users },
@@ -815,7 +816,7 @@ const renderSkillsSection = () => {
       </div>
 
       <div className='rounded-2xl overflow-hidden shadow-lg bg-white/70'>
-        <PuzzleGame />
+        <PuzzleGame onBack={() => setCurrentSection('games')} />
         {/* Nếu PuzzleGame có onBack:
             <PuzzleGame onBack={() => setCurrentSection('games')} />
         */}
@@ -837,7 +838,7 @@ const renderSkillsSection = () => {
       </div>
 
       <div className='rounded-2xl overflow-hidden shadow-lg bg-white/70'>
-        <FindDifferenceGame />
+        <FindDifferenceGame onBack={() => setCurrentSection('games')} />
         {/* Nếu FindDifferenceGame có onBack:
             <FindDifferenceGame onBack={() => setCurrentSection('games')} />
         */}
@@ -1118,7 +1119,7 @@ const renderSkillsSection = () => {
   // ===================== WRAP WITH ScreenTimeProvider =====================
   return (
     <ScreenTimeProvider
-      userId={currentUser.id}
+      userId={user.id}
       onWarn={(remain) => {
         setWarnRemaining(remain);
         setWarnOpen(true);

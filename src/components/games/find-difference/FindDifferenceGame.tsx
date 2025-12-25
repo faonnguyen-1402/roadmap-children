@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -123,7 +123,9 @@ function pickN<T>(arr: T[], n: number) {
 }
 function uniqueIdx(count: number, n: number) {
   const set = new Set<number>();
-  while (set.size < n) set.add(Math.floor(Math.random() * count));
+  // bảo vệ: tránh loop vô hạn nếu n > count
+  const target = Math.min(n, count);
+  while (set.size < target) set.add(Math.floor(Math.random() * count));
   return [...set].sort((a, b) => a - b);
 }
 function makeId() {
@@ -131,7 +133,6 @@ function makeId() {
 }
 
 function getConfig(level: Level) {
-  // grid size + số khác biệt + thời gian
   if (level === 'easy')
     return { size: 3, diffs: 2, time: 45, penalty: 2, hints: 1 };
   if (level === 'medium')
@@ -139,12 +140,18 @@ function getConfig(level: Level) {
   return { size: 5, diffs: 6, time: 95, penalty: 4, hints: 2 };
 }
 
+/**
+ * ✅ FIX chính:
+ * - KHÔNG mutate diffIdx trong lúc forEach
+ * - swap: ghi nhận luôn cả idx và j vào 1 Set
+ * - mọi truy cập right[i] đều được guard an toàn
+ */
 function buildRound(level: Level): Round {
   const cfg = getConfig(level);
   const total = cfg.size * cfg.size;
 
-  const themeKey = pickN(Object.keys(POOLS), 1)[0];
-  const pool = POOLS[themeKey];
+  const themeKey = pickN(Object.keys(POOLS), 1)[0] ?? 'fruits';
+  const pool = POOLS[themeKey] ?? POOLS.fruits;
 
   // base left grid
   const base = pickN(pool, total).map((emoji) => ({ id: makeId(), emoji }));
@@ -153,43 +160,58 @@ function buildRound(level: Level): Round {
   const right = base.map((c) => ({ ...c, id: makeId() }));
 
   // choose diff indices
-  const diffIdx = uniqueIdx(total, cfg.diffs);
+  const initial = uniqueIdx(total, cfg.diffs);
+
+  // collect diffs safely
+  const diffSet = new Set<number>(initial);
 
   // apply variety of diff types
   const modes = shuffle(['replace', 'swap', 'similar'] as const);
 
-  diffIdx.forEach((idx, k) => {
+  for (let k = 0; k < initial.length; k++) {
+    const idx = initial[k];
     const mode = modes[k % modes.length];
 
+    // guard
+    if (!right[idx]) continue;
+
     if (mode === 'swap') {
-      // hoán đổi vị trí 2 ô ở RIGHT (tạo khác biệt vị trí)
       let j = randInt(0, total - 1);
       while (j === idx) j = randInt(0, total - 1);
+
+      if (!right[j]) continue;
+
       const tmp = right[idx].emoji;
       right[idx].emoji = right[j].emoji;
       right[j].emoji = tmp;
-      // lưu ý: swap tạo khác biệt ở 2 vị trí => đảm bảo “khó hơn”
-      // nhưng ta chỉ tính "diffIdx" theo idx chính, vì người chơi click vào idx sẽ thấy đúng.
-      // Để tránh lệch, ta đảm bảo j cũng nằm trong diffIdx.
-      // Nếu j chưa nằm trong diffIdx, ta ép thêm j.
-      if (!diffIdx.includes(j)) diffIdx.push(j);
+
+      // swap tạo khác biệt ở 2 vị trí => add cả 2
+      diffSet.add(idx);
+      diffSet.add(j);
     } else if (mode === 'similar') {
-      // đổi sang emoji gần giống
       const pair = pickN(SIMILAR_PAIRS, 1)[0];
+      if (!pair) continue;
+
       const current = right[idx].emoji;
-      // nếu current trùng một trong pair thì đổi sang cái kia, không thì đổi ngẫu nhiên theo pair
+
       if (current === pair[0]) right[idx].emoji = pair[1];
       else if (current === pair[1]) right[idx].emoji = pair[0];
       else right[idx].emoji = Math.random() > 0.5 ? pair[0] : pair[1];
-    } else {
-      // replace: thay bằng emoji khác trong pool
-      const candidates = pool.filter((e) => e !== right[idx].emoji);
-      right[idx].emoji = pickN(candidates, 1)[0];
-    }
-  });
 
-  // vì swap có thể push thêm idx, cần unique + trim hợp lý theo level (không vượt quá total)
-  const uniqDiff = [...new Set(diffIdx)].slice(0, total);
+      diffSet.add(idx);
+    } else {
+      // replace
+      const candidates = pool.filter((e) => e !== right[idx].emoji);
+      const picked = pickN(candidates.length ? candidates : pool, 1)[0];
+      if (picked) right[idx].emoji = picked;
+
+      diffSet.add(idx);
+    }
+  }
+
+  const uniqDiff = [...diffSet]
+    .filter((i) => i >= 0 && i < total)
+    .sort((a, b) => a - b);
 
   return {
     level,
@@ -202,7 +224,7 @@ function buildRound(level: Level): Round {
 
 export default function FindDifferenceGame({ onBack }: { onBack: () => void }) {
   const [level, setLevel] = useState<Level>('easy');
-  const [seed, setSeed] = useState(0); // đổi seed => round mới
+  const [seed, setSeed] = useState(0);
   const [found, setFound] = useState<number[]>([]);
   const [wrong, setWrong] = useState(0);
   const [hintUsed, setHintUsed] = useState(0);
@@ -211,16 +233,12 @@ export default function FindDifferenceGame({ onBack }: { onBack: () => void }) {
   );
   const [running, setRunning] = useState(true);
 
-  const round = useMemo(() => {
-    const r = buildRound(level);
-    return r;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [level, seed]);
+  const round = useMemo(() => buildRound(level), [level, seed]);
 
-  // timer (không dùng useEffect để khỏi phụ thuộc nhiều; nhưng vẫn cần)
-  // -> làm "mini timer" an toàn: chỉ chạy khi running, và timeLeft > 0
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  useMemo(() => {
+  const cfg = useMemo(() => getConfig(level), [level]);
+
+  // ✅ FIX timer: dùng useEffect (đúng hook), tránh bug dev/prod
+  useEffect(() => {
     if (!running) return;
     if (timeLeft <= 0) return;
 
@@ -228,17 +246,16 @@ export default function FindDifferenceGame({ onBack }: { onBack: () => void }) {
     return () => clearTimeout(t);
   }, [running, timeLeft]);
 
-  const cfg = getConfig(level);
   const win = found.length >= round.diffIdx.length && round.diffIdx.length > 0;
   const lose = timeLeft <= 0 && !win;
 
-  const resetRound = (newSeed?: number) => {
+  const resetRound = () => {
     setFound([]);
     setWrong(0);
     setHintUsed(0);
     setTimeLeft(cfg.time);
     setRunning(true);
-    setSeed((s) => (typeof newSeed === 'number' ? newSeed : s + 1));
+    setSeed((s) => s + 1);
   };
 
   const pick = (i: number) => {
@@ -252,7 +269,6 @@ export default function FindDifferenceGame({ onBack }: { onBack: () => void }) {
       return;
     }
 
-    // click sai hoặc click lại
     if (!isDiff) {
       setWrong((w) => w + 1);
       setTimeLeft((t) => Math.max(0, t - cfg.penalty));
@@ -263,16 +279,23 @@ export default function FindDifferenceGame({ onBack }: { onBack: () => void }) {
     if (!running || win || lose) return;
     if (hintUsed >= cfg.hints) return;
 
-    // reveal 1 difference chưa tìm
     const remaining = round.diffIdx.filter((i) => !found.includes(i));
     if (remaining.length === 0) return;
 
     const reveal = pickN(remaining, 1)[0];
+    if (typeof reveal !== 'number') return;
+
     setFound((prev) => [...prev, reveal]);
     setHintUsed((h) => h + 1);
   };
 
-  const gridStyle = `grid grid-cols-${round.size} gap-2`;
+  // ✅ Tailwind không build được class động "grid-cols-${n}" nếu n thay đổi.
+  // FIX nhỏ: dùng style gridTemplateColumns thay cho class động.
+  const gridStyle = {
+    display: 'grid',
+    gridTemplateColumns: `repeat(${round.size}, minmax(0, 1fr))`,
+    gap: '0.5rem',
+  } as const;
 
   return (
     <div className='space-y-4'>
@@ -342,7 +365,7 @@ export default function FindDifferenceGame({ onBack }: { onBack: () => void }) {
           </div>
 
           <div className='flex items-center gap-2 flex-wrap'>
-            <Button variant='outline' onClick={() => resetRound()}>
+            <Button variant='outline' onClick={resetRound}>
               🔁 Ván mới
             </Button>
 
@@ -367,7 +390,7 @@ export default function FindDifferenceGame({ onBack }: { onBack: () => void }) {
         <CardContent className='space-y-4'>
           <div className='grid grid-cols-2 gap-4'>
             {/* LEFT */}
-            <div className={gridStyle}>
+            <div style={gridStyle}>
               {round.left.map((c, i) => (
                 <div
                   key={c.id}
@@ -387,7 +410,7 @@ export default function FindDifferenceGame({ onBack }: { onBack: () => void }) {
             </div>
 
             {/* RIGHT */}
-            <div className={gridStyle}>
+            <div style={gridStyle}>
               {round.right.map((c, i) => (
                 <div
                   key={c.id}
@@ -414,7 +437,7 @@ export default function FindDifferenceGame({ onBack }: { onBack: () => void }) {
                 Thời gian còn lại: <b>{timeLeft}s</b> • Sai: <b>{wrong}</b>
               </div>
               <div className='flex justify-center gap-2 flex-wrap'>
-                <Button onClick={() => resetRound()}>Chơi lại (ván mới)</Button>
+                <Button onClick={resetRound}>Chơi lại (ván mới)</Button>
                 <Button variant='outline' onClick={onBack}>
                   Về màn trò chơi
                 </Button>
@@ -430,7 +453,7 @@ export default function FindDifferenceGame({ onBack }: { onBack: () => void }) {
                 <b>{round.diffIdx.length}</b> điểm khác biệt.
               </div>
               <div className='flex justify-center gap-2 flex-wrap'>
-                <Button onClick={() => resetRound()}>Thử lại</Button>
+                <Button onClick={resetRound}>Thử lại</Button>
                 <Button
                   variant='outline'
                   onClick={useHint}
