@@ -146,12 +146,13 @@ export default function ChildrenDevelopmentApp() {
     setShowRoleplay(false);
     setProgress(null);
   };
-const renderSkillsSection = () => (
+const renderSkillsSection = () => {
+  if(!currentUser) return null;
   <SkillsVideoHub
     userId={currentUser.id}
     onBack={() => setCurrentSection('home')}
   />
-);
+};
   const startTopic = (topicId: string) => {
     const topic = questionsData.find((t) => t.id === topicId);
     if (topic) {
